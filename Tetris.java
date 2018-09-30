@@ -47,7 +47,7 @@ class Board {
 			{
 				if(i == 0 || j == 0 || i == r - 1 || j == c - 1)
 				{
-					mat[i][j] = '~';
+					mat[i][j] = '|';
 				}
 				else
 				{
@@ -65,7 +65,7 @@ class Board {
 			{
 				if(i == 0 || j == 0 || i == r - 1 || j == c - 1)
 				{
-					mat[i][j] = '~';
+					mat[i][j] = '|';
 				}
 				else if(checkX(i, s) && checkY(j, s))
 				{
@@ -138,6 +138,23 @@ class Shape {
 		}
 	}
 
+	void execute(String ch)
+	{
+		if(ch.equals("r") || ch.equals("l") || ch.equals("b") || ch.equals("d"))
+		{
+			move(ch);
+		}
+		else if(ch.equals("rr"))
+		{
+			rotate(ch);
+		}
+	}
+
+	void rotate(String ch)
+	{
+		
+	}
+
 	void move(String ch)
 	{
 		if(ch.equals("r") && cc != c - 6)
@@ -155,6 +172,10 @@ class Shape {
 		else if(ch.equals("b"))
 		{
 			moveBotom();
+		}
+		if(cr != 28)
+		{
+			moveDown();
 		}
 	}
 	void moveRight()
@@ -192,10 +213,10 @@ class Shape {
 }
 
 class Tetris { 
-	public static void main(String[] args) {
+	public static void main(String[] arags) {
 		int r = 30, c = 30;
 		Scanner sc = new Scanner(System.in);
-
+		
 		Board m = new Board(r, c);
 		m.assign();
 		m.display();
@@ -207,8 +228,8 @@ class Tetris {
 			m.assign(s);
 			m.display();
 			String ch = sc.next();
-			s.move(ch);
+			s.execute(ch);
 		}
-		
 	}
+	
 }
