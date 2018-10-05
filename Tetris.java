@@ -10,8 +10,8 @@ class Board {
 
 	Board(int r, int c)
 	{
-		this.r = c;
-		this.c = r;
+		this.r = r;
+		this.c = c;
 		mat = new char[r][c];
 	}
 
@@ -51,7 +51,7 @@ class Board {
 				}
 				else
 				{
-					mat[i][j] = ' ';	
+					mat[i][j] = ' ';
 				}
 			}
 		}
@@ -73,7 +73,7 @@ class Board {
 				}
 				else
 				{
-					mat[i][j] = ' ';	
+					mat[i][j] = ' ';
 				}
 			}
 		}
@@ -93,7 +93,7 @@ class Board {
 }
 
 class Point {
-	
+
 	private int x, y;
 
 	public void setX(int x) {
@@ -111,25 +111,69 @@ class Point {
 	public int getY() {
 		return y;
 	}
+
+	public void copy(Point t)
+	{
+
+	}
+}
+
+class Direction {
+	
+	private int currentDirection;
+	private int shape;
+
+	Direction()
+	{
+		this.currentDirection = 1;
+
+		Random rand = new Random();
+		int  temp = rand.nextInt( 1) + 1;
+		 
+		this.shape = temp;
+	}
+
+	public int getCurrentDirection() {
+		return currentDirection;
+	}
+
+	public int getShape() {
+		return shape;
+	}
+
+	public void setCurrentDirection(int currentDirection) {
+		this.currentDirection = currentDirection;
+	}
+
+	public void setShape(int shape) {
+		this.shape = shape;
+	}
 }
 
 class Shape {
 	Point[] line;
-	int r, c, cc = 13, cr = 1;
+	Point[] temp;
+	Direction dir;
+	int r, c, cc, cr = 1;
 
 	Shape(int r, int c)
 	{
 		this.r = r;
 		this.c = c;
-		line = new Point[4];
+		this.cc = (c / 2) - 3;
+		dir  = new Direction();
 
+		line = new Point[4];
 		for(int i = 0; i < 4; i++)
 		{
 			line[i] = new Point();
 		}
 
-		/*Random rand = new Random();
-		int  temp = rand.nextInt( c - 4) + 1;*/
+		temp = new Point[4];
+		for(int i = 0; i < 4; i++)
+		{
+			temp[i] = new Point();
+		}
 
 		for(int i = 0; i < 4; i++)
 		{
@@ -137,48 +181,237 @@ class Shape {
 			line[i].setY(cc + i);
 		}
 	}
+	
+	boolean validPonits(Point []temp)
+	{
+		for(int i = 0; i < 4; i++)
+		{
+			if(!(temp[i].getX() > 0 && temp[i].getX() < r - 1))
+			{
+				System.out.println("Invalid Points");
+				return false;
+			}
+			if(!(temp[i].getY() > 0 && temp[i].getY() < c - 1))
+			{
+				System.out.println("Invalid Points");
+				return false;
+			}
+		}
+		System.out.println("Valid Points");
+		return true;
+	}
 
 	void execute(String ch)
 	{
 		if(ch.equals("r") || ch.equals("l") || ch.equals("b") || ch.equals("d"))
 		{
-			move(ch);
+			if(dir.getCurrentDirection() == 1 || dir.getCurrentDirection() == 3)
+				moveHorizontal(ch);
+			
+			if(dir.getCurrentDirection() == 2 || dir.getCurrentDirection() == 4)
+				moveVertical(ch);
 		}
 		else if(ch.equals("rr"))
 		{
-			rotate(ch);
+			//cr++;
+			if(dir.getCurrentDirection() == 1)
+			{
+				rotate1();
+			}
+			else if(dir.getCurrentDirection() == 2)
+			{
+				rotate2();
+			}
+			else if(dir.getCurrentDirection() == 3)
+			{
+				rotate3();
+				
+			}
+			else if(dir.getCurrentDirection() == 4)
+			{
+				rotate4();
+				
+			}
 		}
 	}
 
-	void rotate(String ch)
+	void rotate1()
 	{
-		
+		cr++;
+        for(int  i = 0; i < 4; i++)
+        {
+            temp[i].setX(cr + i);
+            temp[i].setY(cc);
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+			dir.setCurrentDirection(2);
+		}
+		else
+		{
+			cr--;
+		}
+	}
+	void rotate2()
+	{
+		cr++;
+		cc = cc - 3;
+        for(int  i = 0; i < 4; i++)
+        {
+            temp[i].setX(cr);
+            temp[i].setY(cc + i);
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+			dir.setCurrentDirection(3);
+		}
+		else
+		{
+			cc = cc + 3;
+			cr--;
+		}
+	}
+	void rotate3()
+	{
+		cr++;
+		cc = cc + 3;
+		cr = cr - 3;
+        for(int  i = 0; i < 4; i++)
+        {
+            temp[i].setX(cr + i);
+            temp[i].setY(cc);
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+			dir.setCurrentDirection(4);
+		}
+		else
+		{
+			cr--;
+			cc = cc - 3;
+			cr = cr + 3;
+		}
+	}
+	void rotate4()
+	{
+		cr++;
+		cr = cr + 3;
+        for(int  i = 0; i < 4; i++)
+        {
+            temp[i].setX(cr);
+            temp[i].setY(cc + i);
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+			dir.setCurrentDirection(1);
+		}
+		else
+		{
+			cr--;
+			cr = cr - 3;
+		}
 	}
 
-	void move(String ch)
+	void moveVertical(String ch)
 	{
-		if(ch.equals("r") && cc != c - 6)
+		if(ch.equals("r") && cc < c - 2)
 		{
-			moveRight();
+			moveRightVertical();
 		}
-		else if(ch.equals("l") && cc != 1)
+		else if(ch.equals("l") && cc > 1)
 		{
-			moveLeft();
+			moveLeftVertical();
 		}
-		else if(ch.equals("d") && cr != r - 2)
+		else if(ch.equals("d") && line[3].getX() < r - 2)
 		{
-			moveDown();
+			moveDownVertical();
 		}
 		else if(ch.equals("b"))
 		{
-			moveBotom();
+			moveBotomVertical();
 		}
-		if(cr != 28)
+		if(line[3].getX() < r - 5)
 		{
-			moveDown();
+			moveDownVertical();
 		}
 	}
-	void moveRight()
+	void moveRightVertical()
+	{
+		cc++;
+		for(int i = 0; i < 4; i++)
+		{
+			line[i].setY(cc);
+		}
+	}
+	void moveLeftVertical()
+	{
+		cc--;
+		for(int i = 0; i < 4; i++)
+		{
+			line[i].setY(cc);
+		}
+	}
+	void moveDownVertical()
+	{
+		cr++;
+		for(int i = 0; i < 4; i++)
+		{
+			line[i].setX(cr + i);
+		}
+	}
+	void moveBotomVertical()
+	{
+		cr = r - 5;
+		for(int i = 0; i < 4; i++)
+		{
+			line[i].setX(cr + i);
+		}
+	}
+
+	void moveHorizontal(String ch)
+	{
+		if(ch.equals("r") && line[3].getY() < c - 2)
+		{
+			moveRightHorizontal();
+		}
+		else if(ch.equals("l") && line[0].getY() > 1)
+		{
+			moveLeftHorizontal();
+		}
+		else if(ch.equals("d") && cr < r - 2)
+		{
+			moveDownHorizontal();
+		}
+		else if(ch.equals("b"))
+		{
+			moveBotomHorizontal();
+		}
+		if(cr != r - 2)
+		{
+			moveDownHorizontal();
+		}
+	}
+	void moveRightHorizontal()
 	{
 		cc++;
 		for(int i = 0; i < 4; i++)
@@ -186,7 +419,7 @@ class Shape {
 			line[i].setY(cc + i);
 		}
 	}
-	void moveLeft()
+	void moveLeftHorizontal()
 	{
 		cc--;
 		for(int i = 0; i < 4; i++)
@@ -194,7 +427,7 @@ class Shape {
 			line[i].setY(cc + i);
 		}
 	}
-	void moveDown()
+	void moveDownHorizontal()
 	{
 		cr++;
 		for(int i = 0; i < 4; i++)
@@ -202,7 +435,7 @@ class Shape {
 			line[i].setX(cr);
 		}
 	}
-	void moveBotom()
+	void moveBotomHorizontal()
 	{
 		cr = r - 2;
 		for(int i = 0; i < 4; i++)
@@ -212,11 +445,11 @@ class Shape {
 	}
 }
 
-class Tetris { 
+class Tetris {
 	public static void main(String[] arags) {
-		int r = 30, c = 30;
+		int r = 30, c = 50;
 		Scanner sc = new Scanner(System.in);
-		
+
 		Board m = new Board(r, c);
 		m.assign();
 		m.display();
@@ -231,5 +464,5 @@ class Tetris {
 			s.execute(ch);
 		}
 	}
-	
+
 }
