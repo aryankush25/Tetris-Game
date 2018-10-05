@@ -7,31 +7,20 @@ class Board {
 	int r;
 	int c;
 	char[][] mat;
-
+	int count[];
 	Board(int r, int c)
 	{
 		this.r = r;
 		this.c = c;
 		mat = new char[r][c];
+		count = new int[r];
 	}
 
-	boolean checkX(int t, Shape s)
+	boolean check(Shape s)
 	{
 		for(int i = 0; i < 4; i++)
 		{
-			if(t == s.line[i].getX())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	boolean checkY(int t, Shape s)
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			if(t == s.line[i].getY())
+			if(s.line[i].getX() == 28)
 			{
 				return true;
 			}
@@ -57,26 +46,35 @@ class Board {
 		}
 	}
 
-	void assign(Shape s)
+	boolean assign(Shape s1, Shape s2)
 	{
-		for(int i = 0; i < r; i++)
+		if(s2 == null)
 		{
-			for(int j = 0; j < c; j++)
+			for(int i = 0; i < 4; i++)
 			{
-				if(i == 0 || j == 0 || i == r - 1 || j == c - 1)
-				{
-					mat[i][j] = '|';
-				}
-				else if(checkX(i, s) && checkY(j, s))
-				{
-					mat[i][j] = '#';
-				}
-				else
-				{
-					mat[i][j] = ' ';
-				}
+				mat[s1.line[i].getX()][s1.line[i].getY()] = '#';
 			}
+			System.out.println("S2 is Null");
 		}
+		else
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				mat[s2.line[i].getX()][s2.line[i].getY()] = ' ';
+			}
+			for(int i = 0; i < 4; i++)
+			{
+				mat[s1.line[i].getX()][s1.line[i].getY()] = '#';
+			}
+			System.out.println("S2 is Not Null");
+		}
+
+		if(check(s1) == true)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	void display()
@@ -87,7 +85,8 @@ class Board {
 			{
 				System.out.print(mat[i][j]);
 			}
-			System.out.println();
+			System.out.print(" " + count[i] + "\n");
+			count[i] = 0;
 		}
 	}
 }
@@ -110,11 +109,6 @@ class Point {
 
 	public int getY() {
 		return y;
-	}
-
-	public void copy(Point t)
-	{
-
 	}
 }
 
@@ -181,23 +175,35 @@ class Shape {
 			line[i].setY(cc + i);
 		}
 	}
-	
+
+	Shape(Shape s)
+	{
+		line = new Point[4];
+		for(int i = 0; i < 4; i++)
+		{
+			line[i] = new Point();
+		}
+
+		for(int i = 0; i < 4; i++)
+		{
+			line[i].setX(s.line[i].getX());
+			line[i].setY(s.line[i].getY());
+		}
+	}
+
 	boolean validPonits(Point []temp)
 	{
 		for(int i = 0; i < 4; i++)
 		{
 			if(!(temp[i].getX() > 0 && temp[i].getX() < r - 1))
 			{
-				System.out.println("Invalid Points");
 				return false;
 			}
 			if(!(temp[i].getY() > 0 && temp[i].getY() < c - 1))
 			{
-				System.out.println("Invalid Points");
 				return false;
 			}
 		}
-		System.out.println("Valid Points");
 		return true;
 	}
 
@@ -213,7 +219,6 @@ class Shape {
 		}
 		else if(ch.equals("rr"))
 		{
-			//cr++;
 			if(dir.getCurrentDirection() == 1)
 			{
 				rotate1();
@@ -454,14 +459,25 @@ class Tetris {
 		m.assign();
 		m.display();
 
-		Shape s = new Shape(r, c);
+		Shape s1 = null, s2 = null;
+
+		Boolean flag = true;
 
 		while(true)
 		{
-			m.assign(s);
-			m.display();
+			if(flag == true)
+			{
+				s1 = new Shape(r, c);
+				flag = false;
+				s2 = null;
+				m.assign(s1, s2);
+				m.display();
+			}
+			s2 = new Shape(s1);
 			String ch = sc.next();
-			s.execute(ch);
+			s1.execute(ch);
+			flag = m.assign(s1, s2);
+			m.display();
 		}
 	}
 
