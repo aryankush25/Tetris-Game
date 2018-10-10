@@ -16,18 +16,6 @@ class Board {
 		count = new int[r];
 	}
 
-	boolean check(Shape s)
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			if(s.line[i].getX() == 28)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	void assign()
 	{
 		for(int i = 0; i < r; i++)
@@ -46,6 +34,19 @@ class Board {
 		}
 	}
 
+	boolean check(Shape s)
+	{
+		for(int i = 3; i > 0; i--)
+		{
+			//System.out.println(s.line[i].getX());
+			if(mat[s.line[i].getX()][s.line[i].getY()] != ' ')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	boolean assign(Shape s1, Shape s2)
 	{
 		if(s2 == null)
@@ -58,6 +59,16 @@ class Board {
 		}
 		else
 		{
+			if(check(s1) == false)
+			{
+				for(int i = 0; i < 4; i++)
+				{
+					s1.line[i].setX(s2.line[i].getX());
+					s1.line[i].setY(s2.line[i].getY());
+				}
+				return true;
+			}
+			
 			for(int i = 0; i < 4; i++)
 			{
 				mat[s2.line[i].getX()][s2.line[i].getY()] = ' ';
@@ -67,11 +78,6 @@ class Board {
 				mat[s1.line[i].getX()][s1.line[i].getY()] = '#';
 			}
 			System.out.println("S2 is Not Null");
-		}
-
-		if(check(s1) == true)
-		{
-			return true;
 		}
 
 		return false;
@@ -84,6 +90,10 @@ class Board {
 			for(int j = 0; j < c; j++)
 			{
 				System.out.print(mat[i][j]);
+				if(mat[i][j] == '#')
+				{
+					count[i]++;
+				}
 			}
 			System.out.print(" " + count[i] + "\n");
 			count[i] = 0;
@@ -122,7 +132,7 @@ class Direction {
 		this.currentDirection = 1;
 
 		Random rand = new Random();
-		int  temp = rand.nextInt( 1) + 1;
+		int  temp = rand.nextInt(1) + 1;
 		 
 		this.shape = temp;
 	}
@@ -211,11 +221,7 @@ class Shape {
 	{
 		if(ch.equals("r") || ch.equals("l") || ch.equals("b") || ch.equals("d"))
 		{
-			if(dir.getCurrentDirection() == 1 || dir.getCurrentDirection() == 3)
-				moveHorizontal(ch);
-			
-			if(dir.getCurrentDirection() == 2 || dir.getCurrentDirection() == 4)
-				moveVertical(ch);
+			move(ch);
 		}
 		else if(ch.equals("rr"))
 		{
@@ -230,14 +236,13 @@ class Shape {
 			else if(dir.getCurrentDirection() == 3)
 			{
 				rotate3();
-				
 			}
 			else if(dir.getCurrentDirection() == 4)
 			{
 				rotate4();
-				
 			}
 		}
+		moveDown();
 	}
 
 	void rotate1()
@@ -337,122 +342,122 @@ class Shape {
 		}
 	}
 
-	void moveVertical(String ch)
+	void move(String ch)
 	{
-		if(ch.equals("r") && cc < c - 2)
+		if(ch.equals("r"))
 		{
-			moveRightVertical();
+			moveRight();
 		}
-		else if(ch.equals("l") && cc > 1)
+		else if(ch.equals("l"))
 		{
-			moveLeftVertical();
+			moveLeft();
 		}
-		else if(ch.equals("d") && line[3].getX() < r - 2)
+		else if(ch.equals("d"))
 		{
-			moveDownVertical();
-		}
-		else if(ch.equals("b"))
-		{
-			moveBotomVertical();
-		}
-		if(line[3].getX() < r - 5)
-		{
-			moveDownVertical();
+			moveDown();
 		}
 	}
-	void moveRightVertical()
+	void moveRight()
 	{
 		cc++;
-		for(int i = 0; i < 4; i++)
+		if(dir.getCurrentDirection() == 1 || dir.getCurrentDirection() == 3)
 		{
-			line[i].setY(cc);
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr);
+				temp[i].setY(cc + i);
+			}
+		}
+		else
+		{
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr + i);
+				temp[i].setY(cc);
+			}
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+		}
+		else
+		{
+			cc--;
 		}
 	}
-	void moveLeftVertical()
+	void moveLeft()
 	{
 		cc--;
-		for(int i = 0; i < 4; i++)
+		if(dir.getCurrentDirection() == 1 || dir.getCurrentDirection() == 3)
 		{
-			line[i].setY(cc);
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr);
+				temp[i].setY(cc + i);
+			}
+		}
+		else
+		{
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr + i);
+				temp[i].setY(cc);
+			}
+		}
+		if(validPonits(temp) == true)
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
+		}
+		else
+		{
+			cc++;
 		}
 	}
-	void moveDownVertical()
+	void moveDown()
 	{
 		cr++;
-		for(int i = 0; i < 4; i++)
+		if(dir.getCurrentDirection() == 1 || dir.getCurrentDirection() == 3)
 		{
-			line[i].setX(cr + i);
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr);
+				temp[i].setY(cc + i);
+			}
 		}
-	}
-	void moveBotomVertical()
-	{
-		cr = r - 5;
-		for(int i = 0; i < 4; i++)
+		else
 		{
-			line[i].setX(cr + i);
+			for(int  i = 0; i < 4; i++)
+			{
+				temp[i].setX(cr + i);
+				temp[i].setY(cc);
+			}
 		}
-	}
-
-	void moveHorizontal(String ch)
-	{
-		if(ch.equals("r") && line[3].getY() < c - 2)
+		if(validPonits(temp) == true)
 		{
-			moveRightHorizontal();
+			for(int i = 0; i < 4; i++)
+			{
+				line[i].setX(temp[i].getX());
+				line[i].setY(temp[i].getY());
+			}
 		}
-		else if(ch.equals("l") && line[0].getY() > 1)
+		else
 		{
-			moveLeftHorizontal();
-		}
-		else if(ch.equals("d") && cr < r - 2)
-		{
-			moveDownHorizontal();
-		}
-		else if(ch.equals("b"))
-		{
-			moveBotomHorizontal();
-		}
-		if(cr != r - 2)
-		{
-			moveDownHorizontal();
-		}
-	}
-	void moveRightHorizontal()
-	{
-		cc++;
-		for(int i = 0; i < 4; i++)
-		{
-			line[i].setY(cc + i);
-		}
-	}
-	void moveLeftHorizontal()
-	{
-		cc--;
-		for(int i = 0; i < 4; i++)
-		{
-			line[i].setY(cc + i);
-		}
-	}
-	void moveDownHorizontal()
-	{
-		cr++;
-		for(int i = 0; i < 4; i++)
-		{
-			line[i].setX(cr);
-		}
-	}
-	void moveBotomHorizontal()
-	{
-		cr = r - 2;
-		for(int i = 0; i < 4; i++)
-		{
-			line[i].setX(cr);
+			cr--;
 		}
 	}
 }
 
 class Tetris {
 	public static void main(String[] arags) {
-		int r = 30, c = 50;
+		int r = 20, c = 20;
 		Scanner sc = new Scanner(System.in);
 
 		Board m = new Board(r, c);
@@ -480,5 +485,4 @@ class Tetris {
 			m.display();
 		}
 	}
-
 }
