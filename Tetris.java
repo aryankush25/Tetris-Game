@@ -34,13 +34,25 @@ class Board {
 		}
 	}
 
-	boolean check(Shape s)
+	// boolean checkCord(int x, int y, Shape s2)
+	// {
+	// 	for(int i = 3; i > 0; i--)
+	// 	{
+	// 		if(x == s2.line[j].getX() && y == s2.line[j].getY())
+	// 		{
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
+
+	boolean check(Shape s1, Shape s2)
 	{
-		for(int i = 3; i > 0; i--)
+		for(int i = 0; i < 4; i++)
 		{
-			//System.out.println(s.line[i].getX());
-			if(mat[s.line[i].getX()][s.line[i].getY()] != ' ')
+			if(mat[s1.line[i].getX()][s1.line[i].getY()] != ' ')
 			{
+				System.out.println("S2 is Not Null");
 				return false;
 			}
 		}
@@ -59,8 +71,16 @@ class Board {
 		}
 		else
 		{
-			if(check(s1) == false)
+			for(int i = 0; i < 4; i++)
 			{
+				mat[s2.line[i].getX()][s2.line[i].getY()] = ' ';
+			}
+			if(check(s1, s2) == false)
+			{
+				for(int i = 0; i < 4; i++)
+				{
+					mat[s2.line[i].getX()][s2.line[i].getY()] = '#';
+				}
 				for(int i = 0; i < 4; i++)
 				{
 					s1.line[i].setX(s2.line[i].getX());
@@ -71,15 +91,9 @@ class Board {
 			
 			for(int i = 0; i < 4; i++)
 			{
-				mat[s2.line[i].getX()][s2.line[i].getY()] = ' ';
-			}
-			for(int i = 0; i < 4; i++)
-			{
 				mat[s1.line[i].getX()][s1.line[i].getY()] = '#';
 			}
-			System.out.println("S2 is Not Null");
 		}
-
 		return false;
 	}
 
@@ -222,6 +236,7 @@ class Shape {
 		if(ch.equals("r") || ch.equals("l") || ch.equals("b") || ch.equals("d"))
 		{
 			move(ch);
+			//moveDown();
 		}
 		else if(ch.equals("rr"))
 		{
@@ -241,8 +256,9 @@ class Shape {
 			{
 				rotate4();
 			}
+			//moveDown();
 		}
-		moveDown();
+		
 	}
 
 	void rotate1()
@@ -481,6 +497,11 @@ class Tetris {
 			s2 = new Shape(s1);
 			String ch = sc.next();
 			s1.execute(ch);
+			flag = m.assign(s1, s2);
+			m.display();
+
+			s2 = new Shape(s1);
+			s1.execute("d");
 			flag = m.assign(s1, s2);
 			m.display();
 		}
