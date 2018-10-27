@@ -4,7 +4,7 @@ import java.lang.*;
 
 class Board {
 
-	int r;
+	int r,m;
 	int c;
 	char[][] mat;
 	int count[];
