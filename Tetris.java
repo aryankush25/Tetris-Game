@@ -33,19 +33,6 @@ class Board {
 			}
 		}
 	}
-
-	// boolean checkCord(int x, int y, Shape s2)
-	// {
-	// 	for(int i = 3; i > 0; i--)
-	// 	{
-	// 		if(x == s2.line[j].getX() && y == s2.line[j].getY())
-	// 		{
-	// 			return false;
-	// 		}
-	// 	}
-	// 	return true;
-	// }
-
 	boolean check(Shape s1, Shape s2)
 	{
 		for(int i = 0; i < 4; i++)
